@@ -19,19 +19,11 @@ public class QueryExecutor {
             final String sql,
             final RowMapper<T> rowMapper,
             final PreparedStatementParameterSetter parameterSetter) {
-        try (
-                final Connection con = ConnectionManager.getConnection();
-                final PreparedStatement pstmt = con.prepareStatement(sql)
-        ) {
-            parameterSetter.setParameters(pstmt);
-            final ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return rowMapper.mapRow(rs);
-            }
+        final List<T> list = this.executeQuery(sql, rowMapper, parameterSetter);
+        if (list.isEmpty()) {
             return null;
-        } catch (final SQLException ex) {
-            throw new SQLRuntimeException(ex);
         }
+        return list.get(0);
     }
 
     public <T> T executeScalar(final String sql, final ThrowableRowMapper<T> throwableRowMapper, final Object... queryParams) {

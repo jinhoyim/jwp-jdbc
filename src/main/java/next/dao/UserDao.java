@@ -7,10 +7,17 @@ import next.model.User;
 import java.util.List;
 
 public class UserDao {
+
+    final QueryExecutor queryExecutor;
+
+
+    public UserDao() {
+        this.queryExecutor = new QueryExecutor();
+    }
+
     public void insert(final User user) {
         final String sql = "INSERT INTO USERS VALUES (?, ?, ?, ?)";
-        final QueryExecutor updateExecutor = new QueryExecutor();
-        updateExecutor.executeUpdate(
+        this.queryExecutor.executeUpdate(
                 sql,
                 user.getUserId(),
                 user.getPassword(),
@@ -20,8 +27,7 @@ public class UserDao {
 
     public void insertWithParameterSetter(final User user) {
         final String sql = "INSERT INTO USERS VALUES (?, ?, ?, ?)";
-        final QueryExecutor updateExecutor = new QueryExecutor();
-        updateExecutor.executeUpdate(
+        this.queryExecutor.executeUpdate(
                 sql,
                 PreparedStatementParameterSetterCreator.create(
                         user.getUserId(),
@@ -32,8 +38,7 @@ public class UserDao {
 
     public void update(final User user) {
         final String sql = "UPDATE USERS SET password=?, name=?, email=? WHERE userId=?";
-        final QueryExecutor updateExecutor = new QueryExecutor();
-        updateExecutor.executeUpdate(
+        this.queryExecutor.executeUpdate(
                 sql,
                 user.getPassword(),
                 user.getName(),
@@ -43,8 +48,7 @@ public class UserDao {
 
     public void updateWithParameterSetter(final User user) {
         final String sql = "UPDATE USERS SET password=?, name=?, email=? WHERE userId=?";
-        final QueryExecutor updateExecutor = new QueryExecutor();
-        updateExecutor.executeUpdate(
+        this.queryExecutor.executeUpdate(
                 sql,
                 PreparedStatementParameterSetterCreator.create(
                         user.getPassword(),
@@ -55,24 +59,21 @@ public class UserDao {
 
     public void delete(final User user) {
         final String sql = "DELETE FROM USERS WHERE userId=?";
-        final QueryExecutor updateExecutor = new QueryExecutor();
-        updateExecutor.executeUpdate(
+        this.queryExecutor.executeUpdate(
                 sql,
                 user.getUserId());
     }
 
     public List<User> findAll() {
         final String sql = "SELECT userId, password, name, email FROM USERS";
-        final QueryExecutor queryExecutor = new QueryExecutor();
-        return queryExecutor.executeQuery(
+        return this.queryExecutor.executeQuery(
                 sql,
                 User.class);
     }
 
     public List<User> findAllWithMapper() {
         final String sql = "SELECT userId, password, name, email FROM USERS";
-        final QueryExecutor queryExecutor = new QueryExecutor();
-        return queryExecutor.executeQuery(
+        return this.queryExecutor.executeQuery(
                 sql,
                 rs -> {
                     final User user = new User(
@@ -86,8 +87,7 @@ public class UserDao {
 
     public User findByUserId(final String userId) {
         final String sql = "SELECT userId, password, name, email FROM USERS WHERE userid=?";
-        final QueryExecutor queryExecutor = new QueryExecutor();
-        return queryExecutor.executeScalar(
+        return this.queryExecutor.executeScalar(
                 sql,
                 User.class,
                 userId);
@@ -95,8 +95,7 @@ public class UserDao {
 
     public User findByUserIdWithMapper(final String userId) {
         final String sql = "SELECT userId, password, name, email FROM USERS WHERE userid=?";
-        final QueryExecutor queryExecutor = new QueryExecutor();
-        return queryExecutor.executeScalar(
+        return this.queryExecutor.executeScalar(
                 sql,
                 rs -> {
                     final User user = new User(
